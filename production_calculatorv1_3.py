@@ -130,6 +130,8 @@ class ProductionCalculator:
                 widget.destroy()
             
             # Calculate and display results for each hourly value
+            total_actual = 0
+            completed_hours = 0
             for i, hourly_var in enumerate(self.hourly_vars):
                 hourly_value_str = hourly_var.get().strip()
                 if hourly_value_str:  # Only process non-empty values
@@ -137,6 +139,8 @@ class ProductionCalculator:
                     
                     # Calculate actual value: unit_value * hourly_value
                     actual_value = unit_value * hourly_value
+                    total_actual += actual_value
+                    completed_hours += 1
                     
                     # Calculate percentage of target, rounded to nearest whole number
                     percentage = round((actual_value / hourly_target) * 100)
@@ -157,6 +161,35 @@ class ProductionCalculator:
                     percentage_label = tk.Label(self.results_frame, text=f"{percentage}%", background=bg_color, 
                                               relief="solid", borderwidth=1)
                     percentage_label.grid(row=row, column=2, sticky=tk.W, pady=1, padx=2)
+
+            if completed_hours:
+                total_target = hourly_target * completed_hours
+                total_difference = round(total_actual - total_target)
+                total_percentage = round((total_actual / total_target) * 100)
+                total_bg_color = "#90EE90" if total_percentage >= 92 else "#FFB6C1"
+                total_row = len(self.hourly_vars)
+
+                ttk.Separator(self.results_frame, orient=tk.HORIZONTAL).grid(
+                    row=total_row, column=0, columnspan=4, sticky=(tk.W, tk.E), pady=(6, 3)
+                )
+                ttk.Label(self.results_frame, text="Totals", font=("Arial", 9, "bold")).grid(
+                    row=total_row + 1, column=0, sticky=tk.W, pady=1
+                )
+                ttk.Label(self.results_frame, text=f"{int(total_actual)}", font=("Arial", 9, "bold")).grid(
+                    row=total_row + 1, column=1, sticky=tk.W, pady=1
+                )
+                total_percentage_label = tk.Label(
+                    self.results_frame,
+                    text=f"{total_percentage}%",
+                    background=total_bg_color,
+                    relief="solid",
+                    borderwidth=1,
+                    font=("Arial", 9, "bold"),
+                )
+                total_percentage_label.grid(row=total_row + 1, column=2, sticky=tk.W, pady=1, padx=2)
+                ttk.Label(self.results_frame, text=f"{total_difference:+d}", font=("Arial", 9, "bold")).grid(
+                    row=total_row + 1, column=3, sticky=tk.W, pady=1
+                )
                     
         except ValueError as e:
             # Clear results and show error
