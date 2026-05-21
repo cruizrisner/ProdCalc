@@ -10,7 +10,7 @@ class ProductionCalculator:
     def __init__(self, root):
         self.root = root
         self.root.title("Production Calculator")
-        self.root.geometry("600x500")
+        self.root.geometry("700x500")
         
         # Create main frame
         main_frame = ttk.Frame(root, padding="10")
@@ -78,10 +78,12 @@ class ProductionCalculator:
         headers_frame.columnconfigure(0, weight=1)
         headers_frame.columnconfigure(1, weight=1)
         headers_frame.columnconfigure(2, weight=1)
+        headers_frame.columnconfigure(3, weight=1)
         
         ttk.Label(headers_frame, text="Hour", font=("Arial", 9, "bold")).grid(row=0, column=0, sticky=tk.W)
         ttk.Label(headers_frame, text="Actual Value", font=("Arial", 9, "bold")).grid(row=0, column=1, sticky=tk.W)
         ttk.Label(headers_frame, text="% of Target", font=("Arial", 9, "bold")).grid(row=0, column=2, sticky=tk.W)
+        ttk.Label(headers_frame, text="Difference", font=("Arial", 9, "bold")).grid(row=0, column=3, sticky=tk.W)
         
         # Results display area
         self.results_frame = ttk.Frame(results_frame)
@@ -89,6 +91,7 @@ class ProductionCalculator:
         self.results_frame.columnconfigure(0, weight=1)
         self.results_frame.columnconfigure(1, weight=1)
         self.results_frame.columnconfigure(2, weight=1)
+        self.results_frame.columnconfigure(3, weight=1)
         
         # Configure main frame row weights
         main_frame.rowconfigure(12, weight=1)
@@ -137,6 +140,9 @@ class ProductionCalculator:
                     
                     # Calculate percentage of target, rounded to nearest whole number
                     percentage = round((actual_value / hourly_target) * 100)
+
+                    # Calculate difference from target
+                    difference = round(actual_value - hourly_target)
                     
                     # Determine background color based on percentage
                     bg_color = "#90EE90" if percentage >= 92 else "#FFB6C1"  # Light green or light red
@@ -145,6 +151,7 @@ class ProductionCalculator:
                     row = i
                     ttk.Label(self.results_frame, text=f"Hour {i+1}:").grid(row=row, column=0, sticky=tk.W, pady=1)
                     ttk.Label(self.results_frame, text=f"{int(actual_value)}").grid(row=row, column=1, sticky=tk.W, pady=1)
+                    ttk.Label(self.results_frame, text=f"{difference:+d}").grid(row=row, column=3, sticky=tk.W, pady=1)
                     
                     # Create percentage label with colored background
                     percentage_label = tk.Label(self.results_frame, text=f"{percentage}%", background=bg_color, 
